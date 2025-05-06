@@ -54,7 +54,20 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
 
   // Translation function
   const t = (key: string): string => {
-    return translations[language]?.[key] || key;
+    // Split the key by dots to handle nested objects
+    const keys = key.split(".");
+    let result = translations[language];
+
+    // Navigate through the nested structure
+    for (const k of keys) {
+      if (!result || typeof result !== "object") {
+        return key; // Return the key if we can't navigate further
+      }
+      result = result[k];
+    }
+
+    // Return the translation or the key if no translation found
+    return result || key;
   };
 
   const value = {
