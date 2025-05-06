@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
+import { ArrowBigLeft } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -129,6 +130,15 @@ const Register = () => {
             {t("register.haveAccount")}{" "}
             <Link to="/login" className="text-blue-600 hover:text-blue-800">
               {t("register.login")}
+            </Link>
+          </p>
+          {/* Back to home */}
+          <p className="text-sm text-center">
+            <Link
+              to="/"
+              className="text-blue-600 hover:text-blue-800 flex items-center"
+            >
+              <ArrowBigLeft className="inline mr-1" /> Back to Home
             </Link>
           </p>
         </CardFooter>
