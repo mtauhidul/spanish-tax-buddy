@@ -1,4 +1,5 @@
 // src/features/auth/AuthContext.tsx
+import { AuthContext } from "@/hooks/useAuth";
 import { auth, db } from "@/lib/firebase";
 import {
   createUserWithEmailAndPassword,
@@ -10,31 +11,7 @@ import {
   type User,
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
-
-interface AuthContextProps {
-  currentUser: User | null;
-  isAdmin: boolean;
-  loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (
-    email: string,
-    password: string,
-    displayName: string
-  ) => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
-  logout: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
-
-export const useAuth = () => useContext(AuthContext);
+import { useEffect, useState, type ReactNode } from "react";
 
 interface AuthProviderProps {
   children: ReactNode;

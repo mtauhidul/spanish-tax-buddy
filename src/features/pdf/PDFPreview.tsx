@@ -22,6 +22,8 @@ const PDFPreview = ({ pdfBytes, formValues, formData }: PDFPreviewProps) => {
 
   // Fill PDF with form values
   useEffect(() => {
+    let dataUrl: string | null = null;
+
     const fillPdf = async () => {
       try {
         setLoading(true);
@@ -42,13 +44,9 @@ const PDFPreview = ({ pdfBytes, formValues, formData }: PDFPreviewProps) => {
               }
             }
           } catch (error) {
-            // Field might not exist or might be of a different type
             console.warn(`Could not fill field ${fieldName}:`, error);
           }
         });
-
-        // Flatten form fields to prevent further editing (optional)
-        // form.flatten();
 
         // Save the filled PDF
         const filledPdfBytes = await pdfDoc.save();
@@ -56,7 +54,7 @@ const PDFPreview = ({ pdfBytes, formValues, formData }: PDFPreviewProps) => {
 
         // Create a data URL for preview
         const blob = new Blob([filledPdfBytes], { type: "application/pdf" });
-        const dataUrl = URL.createObjectURL(blob);
+        dataUrl = URL.createObjectURL(blob);
         setPdfDataUrl(dataUrl);
       } catch (error) {
         console.error("Error filling PDF:", error);
@@ -70,15 +68,15 @@ const PDFPreview = ({ pdfBytes, formValues, formData }: PDFPreviewProps) => {
     } else if (pdfBytes) {
       // Just display the original PDF if no form values
       const blob = new Blob([pdfBytes], { type: "application/pdf" });
-      const dataUrl = URL.createObjectURL(blob);
+      dataUrl = URL.createObjectURL(blob);
       setPdfDataUrl(dataUrl);
       setLoading(false);
     }
 
     return () => {
-      // Clean up data URL when component unmounts
-      if (pdfDataUrl) {
-        URL.revokeObjectURL(pdfDataUrl);
+      // Clean up data URL when component unmounts or effect reruns
+      if (dataUrl) {
+        URL.revokeObjectURL(dataUrl);
       }
     };
   }, [pdfBytes, formValues]);

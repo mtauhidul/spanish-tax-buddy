@@ -1,6 +1,6 @@
 // src/components/AdminRoute.tsx
 
-import { useAuth } from "@/features/auth/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 
 interface AdminRouteProps {

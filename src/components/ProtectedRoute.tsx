@@ -1,5 +1,5 @@
 // src/components/ProtectedRoute.tsx
-import { useAuth } from "@/features/auth/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 
 interface ProtectedRouteProps {

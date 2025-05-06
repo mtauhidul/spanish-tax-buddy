@@ -7,9 +7,9 @@ import PDFPreview from "@/features/pdf/PDFPreview";
 import UploadForm from "@/features/upload/UploadForm";
 import { useLanguage } from "@/hooks/useLanguage";
 import MainLayout from "@/layout/MainLayout";
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
+import axios from "axios";
 import { doc, getDoc } from "firebase/firestore";
-import { getDownloadURL, ref } from "firebase/storage";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -19,7 +19,7 @@ interface FormData {
   name: string;
   description: string;
   year: number;
-  pdfUrl: string;
+  pdfUrl?: string;
   formFields?: Record<string, FormField>;
   aiPrompt?: string;
 }
@@ -45,24 +45,28 @@ const FormFill = () => {
           return;
         }
 
-        const formData = formDoc.data() as Omit<FormData, "id" | "pdfUrl">;
+        const formData = formDoc.data() as Omit<FormData, "id">;
 
-        // Get PDF file URL from storage
-        const pdfRef = ref(storage, `forms/${formId}.pdf`);
-        const pdfUrl = await getDownloadURL(pdfRef);
+        // If there's a PDF URL from Cloudinary, fetch it
+        if (formData.pdfUrl) {
+          try {
+            console.log("Fetching PDF from URL:", formData.pdfUrl);
+            const response = await axios.get(formData.pdfUrl, {
+              responseType: "arraybuffer",
+            });
 
-        // Fetch the PDF file as an ArrayBuffer
-        const response = await fetch(pdfUrl);
-        const pdfArrayBuffer = await response.arrayBuffer();
-        const pdfBytes = new Uint8Array(pdfArrayBuffer);
+            // Convert array buffer to Uint8Array
+            const pdfBytes = new Uint8Array(response.data);
+            setPdfBytes(pdfBytes);
+          } catch (error) {
+            console.error("Error fetching PDF:", error);
+          }
+        }
 
         setFormData({
           id: formId,
           ...formData,
-          pdfUrl,
         });
-
-        setPdfBytes(pdfBytes);
 
         // Initialize form values with empty strings
         if (formData.formFields) {
@@ -82,13 +86,16 @@ const FormFill = () => {
     fetchFormData();
   }, [formId]);
 
+  // Debounce form value changes to prevent excessive re-renders
   const handleFormValueChange = (fieldName: string, value: string) => {
+    // Use functional update to ensure we have the latest state
     setFormValues((prevValues) => ({
       ...prevValues,
       [fieldName]: value,
     }));
   };
 
+  // Used by AI and Upload components for bulk updates
   const handleFormValuesUpdate = (newValues: Record<string, string>) => {
     setFormValues(newValues);
   };

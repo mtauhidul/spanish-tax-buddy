@@ -31,18 +31,24 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useLanguage } from "@/hooks/useLanguage";
 import MainLayout from "@/layout/MainLayout";
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
+import axios from "axios";
 import {
   addDoc,
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
 } from "firebase/firestore";
-import { deleteObject, ref, uploadBytes } from "firebase/storage";
 import { Eye, FileUp, Loader2, Trash2 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+
+// Replace with your Cloudinary configuration from the environment variables
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`;
 
 interface TaxForm {
   id: string;
@@ -51,6 +57,7 @@ interface TaxForm {
   year: number;
   type: string;
   createdAt: string;
+  pdfUrl?: string;
 }
 
 const Admin = () => {
@@ -65,6 +72,11 @@ const Admin = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useLanguage();
+
+  // Fetch forms on component mount
+  useEffect(() => {
+    fetchForms();
+  }, []);
 
   // Fetch forms from Firestore
   const fetchForms = async () => {
@@ -105,11 +117,6 @@ const Admin = () => {
     e.preventDefault();
 
     if (!selectedFile || !formName || !formType) {
-      // toast({
-      //   title: t("admin.formIncomplete"),
-      //   description: t("admin.fillAllFields"),
-      //   variant: "destructive",
-      // });
       toast.error(t("admin.formIncomplete"), {
         description: t("admin.fillAllFields"),
       });
@@ -119,23 +126,37 @@ const Admin = () => {
     try {
       setUploading(true);
 
-      // 1. Add form metadata to Firestore
+      // 1. First, upload to Cloudinary
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+      // Log the upload attempt
+      console.log("Attempting to upload to Cloudinary...");
+
+      const cloudinaryResponse = await axios.post(
+        CLOUDINARY_UPLOAD_URL,
+        formData
+      );
+
+      // Log successful upload
+      console.log("Cloudinary upload successful:", cloudinaryResponse.data);
+
+      const pdfUrl = cloudinaryResponse.data.secure_url;
+
+      // 2. Then save metadata + URL to Firestore
       const formDoc = await addDoc(collection(db, "forms"), {
         name: formName,
         description: formDescription,
         year: formYear,
         type: formType,
         createdAt: new Date().toISOString(),
+        pdfUrl: pdfUrl, // Store the Cloudinary URL
       });
 
-      // 2. Upload PDF to Firebase Storage
-      const storageRef = ref(storage, `forms/${formDoc.id}.pdf`);
-      await uploadBytes(storageRef, selectedFile);
+      console.log("Document written with ID: ", formDoc.id);
 
-      // 3. Get download URL
-      // const downloadURL = await getDownloadURL(storageRef);
-
-      // 4. Reset form
+      // 3. Reset form
       setFormName("");
       setFormDescription("");
       setFormYear(new Date().getFullYear());
@@ -146,26 +167,23 @@ const Admin = () => {
         fileInputRef.current.value = "";
       }
 
-      // 5. Close dialog and refresh forms list
+      // 4. Close dialog and refresh forms list
       setIsDialogOpen(false);
 
-      // toast({
-      //   title: t("admin.success"),
-      //   description: t("admin.formUploaded"),
-      // });
       toast.success(t("admin.success"), {
         description: t("admin.formUploaded"),
       });
 
-      // 6. Refresh forms list
+      // 5. Refresh forms list
       fetchForms();
     } catch (error) {
       console.error("Error uploading form:", error);
-      // toast({
-      //   title: t("admin.error"),
-      //   description: t("admin.uploadError"),
-      //   variant: "destructive",
-      // });
+
+      // More detailed error logging
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error details:", error.response?.data);
+      }
+
       toast.error(t("admin.error"), {
         description: t("admin.uploadError"),
       });
@@ -183,30 +201,39 @@ const Admin = () => {
     try {
       setLoading(true);
 
-      // 1. Delete from Firestore
+      // 1. Get the form document to find the Cloudinary URL
+      const formDoc = await getDoc(doc(db, "forms", formId));
+      const formData = formDoc.data() as TaxForm;
+
+      // 2. Delete from Cloudinary (if URL exists)
+      if (formData && formData.pdfUrl) {
+        // Note: Properly deleting from Cloudinary requires a server-side component
+        // This is a simplified example and would need a more secure implementation
+        // for production use
+
+        // Extract the public_id from the URL
+        const urlParts = formData.pdfUrl.split("/");
+        const fileNameWithExtension = urlParts[urlParts.length - 1];
+        const publicId = fileNameWithExtension.split(".")[0];
+
+        console.log("Should delete from Cloudinary with public_id:", publicId);
+        // For proper implementation, you'd use a server API route to delete securely
+
+        // Example server code:
+        // await axios.post('/api/cloudinary/delete', { public_id: publicId });
+      }
+
+      // 3. Delete from Firestore
       await deleteDoc(doc(db, "forms", formId));
 
-      // 2. Delete from Storage
-      const storageRef = ref(storage, `forms/${formId}.pdf`);
-      await deleteObject(storageRef);
-
-      // 3. Update local state
+      // 4. Update local state
       setForms(forms.filter((form) => form.id !== formId));
 
-      // toast({
-      //   title: t("admin.deleted"),
-      //   description: t("admin.formDeleted"),
-      // });
       toast.success(t("admin.deleted"), {
         description: t("admin.formDeleted"),
       });
     } catch (error) {
       console.error("Error deleting form:", error);
-      // toast({
-      //   title: t("admin.error"),
-      //   description: t("admin.deleteError"),
-      //   variant: "destructive",
-      // });
       toast.error(t("admin.error"), {
         description: t("admin.deleteError"),
       });
@@ -222,11 +249,6 @@ const Admin = () => {
     if (file && file.type === "application/pdf") {
       setSelectedFile(file);
     } else {
-      // toast({
-      //   title: t("admin.invalidFile"),
-      //   description: t("admin.pdfOnly"),
-      //   variant: "destructive",
-      // });
       toast.error(t("admin.invalidFile"), {
         description: t("admin.pdfOnly"),
       });
