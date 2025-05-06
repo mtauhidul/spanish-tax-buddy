@@ -1,5 +1,7 @@
 // src/pages/FormFill.tsx
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AIChatForm from "@/features/ai-assistant/AIChatForm";
@@ -12,7 +14,7 @@ import MainLayout from "@/layout/MainLayout";
 import { db } from "@/lib/firebase";
 import axios from "axios";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { Loader2, Save } from "lucide-react";
+import { AlertCircle, Loader2, Save } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -50,6 +52,8 @@ const FormFill = () => {
   const [formValues, setFormValues] = useState<Record<string, string>>({});
   const [pdfBytes, setPdfBytes] = useState<Uint8Array | null>(null);
   const [activeTab, setActiveTab] = useState<string>("ai-chat");
+  const [, setCurrentField] = useState<string | undefined>(undefined);
+  const [error, setError] = useState<string | null>(null);
   const { t } = useLanguage();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -88,10 +92,7 @@ const FormFill = () => {
 
         if (!formDoc.exists()) {
           console.error("Form not found");
-          toast.error(t("form.notFound"), {
-            description: t("form.tryAgain"),
-          });
-          navigate("/dashboard");
+          setError(t("form.notFound"));
           return;
         }
 
@@ -110,6 +111,8 @@ const FormFill = () => {
           aiPrompt: formDocData.aiPrompt,
         };
 
+        setFormData(loadedFormData);
+
         // If there's a PDF URL from Cloudinary, fetch it
         if (loadedFormData.pdfUrl) {
           try {
@@ -122,13 +125,9 @@ const FormFill = () => {
             setPdfBytes(pdfBytes);
           } catch (error) {
             console.error("Error fetching PDF:", error);
-            toast.error(t("form.pdfError"), {
-              description: t("form.pdfErrorDescription"),
-            });
+            setError(t("form.pdfError"));
           }
         }
-
-        setFormData(loadedFormData);
 
         // Try to load previously saved progress
         const savedValues = await fetchSavedProgress();
@@ -150,9 +149,7 @@ const FormFill = () => {
         }
       } catch (error) {
         console.error("Error fetching form data:", error);
-        toast.error(t("form.loadError"), {
-          description: t("form.loadErrorDescription"),
-        });
+        setError(t("form.loadError"));
       } finally {
         setLoading(false);
       }
@@ -201,6 +198,12 @@ const FormFill = () => {
       ...prevValues,
       [fieldName]: value,
     }));
+    setCurrentField(fieldName);
+
+    // Clear current field highlight after a delay
+    setTimeout(() => {
+      setCurrentField(undefined);
+    }, 2000);
   };
 
   // Used by AI and Upload components for bulk updates
@@ -224,6 +227,26 @@ const FormFill = () => {
     );
   }
 
+  if (error) {
+    return (
+      <MainLayout>
+        <div className="container mx-auto py-8">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>{t("form.error")}</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+
+          <div className="flex justify-center mt-6">
+            <Button onClick={() => navigate("/dashboard")}>
+              {t("notFound.returnHome")}
+            </Button>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
   if (!formData) {
     return (
       <MainLayout>
@@ -241,7 +264,15 @@ const FormFill = () => {
         <div className="flex justify-between items-center mb-4">
           <div>
             <h1 className="text-3xl font-bold mb-2">{formData.name}</h1>
-            <p className="text-gray-600">{formData.description}</p>
+            <div className="flex items-center">
+              <p className="text-gray-600 mr-3">{formData.description}</p>
+              <Badge
+                variant="outline"
+                className="text-blue-600 border-blue-200 bg-blue-50"
+              >
+                {formData.year}
+              </Badge>
+            </div>
           </div>
           <Button
             variant="outline"
@@ -260,7 +291,7 @@ const FormFill = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="w-full mb-6">
                 <TabsTrigger value="ai-chat" className="flex-1">
                   {t("form.aiAssistant")}
@@ -274,10 +305,17 @@ const FormFill = () => {
               </TabsList>
 
               <TabsContent value="ai-chat">
-                <AIChatForm
-                  formData={formData}
-                  onFormValuesUpdate={handleFormValuesUpdate}
-                />
+                {pdfBytes ? (
+                  <AIChatForm
+                    formData={formData}
+                    pdfBytes={pdfBytes}
+                    onFormValuesUpdate={handleFormValuesUpdate}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-[600px] bg-gray-50 rounded-lg">
+                    <p className="text-gray-500">{t("form.loadingPdf")}</p>
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="manual">

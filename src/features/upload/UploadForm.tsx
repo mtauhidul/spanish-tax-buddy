@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/hooks/useLanguage";
+import type { FormData, FormField } from "@/types/form";
 import {
   AlertCircle,
   CheckCircle,
@@ -21,22 +22,6 @@ import {
 import { PDFDocument } from "pdf-lib";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-
-// Define FormField interface to match with other components
-interface FormField {
-  name: string;
-  label: {
-    en: string;
-    es: string;
-  };
-  type: "text" | "number" | "date" | "checkbox" | "email";
-  placeholder?: {
-    en: string;
-    es: string;
-  };
-  required?: boolean;
-  validation?: string;
-}
 
 // Enhanced PDF extraction function that properly reads form fields
 const extractPDFFields = async (
@@ -62,12 +47,22 @@ const extractPDFFields = async (
         if (field.constructor.name === "PDFTextField") {
           const textField = form.getTextField(fieldName);
           const value = textField.getText();
-          if (value) extractedData[fieldName] = value;
+          if (value) extractedData[String(fieldName)] = value;
         } else if (field.constructor.name === "PDFCheckBox") {
           const checkBox = form.getCheckBox(fieldName);
           extractedData[fieldName] = checkBox.isChecked() ? "true" : "false";
+        } else if (field.constructor.name === "PDFRadioGroup") {
+          const radioGroup = form.getRadioGroup(fieldName);
+          const value = radioGroup.getSelected();
+          if (value) extractedData[String(fieldName)] = value;
+        } else if (field.constructor.name === "PDFDropdown") {
+          const dropdown = form.getDropdown(fieldName);
+          const value = dropdown.getSelected();
+          if (value)
+            extractedData[fieldName.toString()] = Array.isArray(value)
+              ? value.join(", ")
+              : value;
         }
-        // Add support for other field types as needed
       } catch (error) {
         console.warn(
           `Error extracting value for field ${field.getName()}:`,
@@ -201,11 +196,7 @@ const findMissingRequiredFields = (
 };
 
 interface UploadFormProps {
-  formData: {
-    id: string;
-    name: string;
-    formFields?: Record<string, FormField>;
-  };
+  formData: FormData;
   onFormValuesUpdate: (values: Record<string, string>) => void;
 }
 

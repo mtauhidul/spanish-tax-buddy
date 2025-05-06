@@ -1,10 +1,10 @@
 // src/features/pdf/PDFPreview.tsx
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/useLanguage";
-import { debounce } from "lodash";
+import { throttle } from "lodash";
 import { Download, Loader2, ZoomIn, ZoomOut } from "lucide-react";
 import { PDFDocument } from "pdf-lib";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface PDFPreviewProps {
   pdfBytes: Uint8Array;
@@ -19,16 +19,23 @@ const PDFPreview = ({ pdfBytes, formValues, formData }: PDFPreviewProps) => {
   const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
   const [filledPdfBytes, setFilledPdfBytes] = useState<Uint8Array | null>(null);
   const [loading, setLoading] = useState(true);
-  const [zoomLevel, setZoomLevel] = useState<number>(1.2); // Increased default zoom
+  const [zoomLevel, setZoomLevel] = useState<number>(1.2);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const { t } = useLanguage();
 
-  // Use debounce to prevent excessive PDF rendering
+  // Keep track of the previous formValues to avoid unnecessary updates
+  const prevValuesRef = useRef<Record<string, string>>({});
+
+  // Create a throttled function for filling PDF to minimize re-renders
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedFillPdf = useCallback(
-    debounce(
+  const throttledFillPdf = useCallback(
+    throttle(
       async (pdfBytes: Uint8Array, formValues: Record<string, string>) => {
         try {
-          setLoading(true);
+          // Only show loading indicator on initial load, not on updates
+          if (!pdfDataUrl) {
+            setLoading(true);
+          }
 
           // Load the PDF document
           const pdfDoc = await PDFDocument.load(pdfBytes);
@@ -40,33 +47,63 @@ const PDFPreview = ({ pdfBytes, formValues, formData }: PDFPreviewProps) => {
           Object.entries(formValues).forEach(([fieldName, value]) => {
             try {
               if (value !== undefined) {
-                const field = form.getTextField(fieldName);
-                if (field) {
-                  // Handle checkbox values
-                  if (value === "true" || value === "false") {
-                    try {
-                      const checkboxField = form.getCheckBox(fieldName);
-                      if (checkboxField) {
-                        if (value === "true") {
-                          checkboxField.check();
-                        } else {
-                          checkboxField.uncheck();
-                        }
-                        return;
+                // Try to handle field based on its type
+                if (value === "true" || value === "false") {
+                  try {
+                    const checkboxField = form.getCheckBox(fieldName);
+                    if (checkboxField) {
+                      if (value === "true") {
+                        checkboxField.check();
+                      } else {
+                        checkboxField.uncheck();
                       }
-                    } catch {
-                      // If it's not a checkbox, continue with text field
-                      field.setText(value);
+                      return;
                     }
-                  } else {
-                    field.setText(value);
+                  } catch {
+                    // Not a checkbox, continue with other field types
                   }
+                }
+
+                try {
+                  // Try to handle as a text field
+                  const textField = form.getTextField(fieldName);
+                  if (textField) {
+                    textField.setText(value);
+                    return;
+                  }
+                } catch {
+                  // Not a text field, continue
+                }
+
+                try {
+                  // Try to handle as a radio button
+                  const radioGroup = form.getRadioGroup(fieldName);
+                  if (radioGroup) {
+                    radioGroup.select(value);
+                    return;
+                  }
+                } catch {
+                  // Not a radio group, continue
+                }
+
+                try {
+                  // Try to handle as a dropdown
+                  const dropdown = form.getDropdown(fieldName);
+                  if (dropdown) {
+                    dropdown.select(value);
+                    return;
+                  }
+                } catch {
+                  // Not a dropdown, continue
                 }
               }
             } catch (error) {
               console.warn(`Could not fill field ${fieldName}:`, error);
             }
           });
+
+          // Flatten form fields to make them visible in all PDF readers
+          form.flatten();
 
           // Save the filled PDF
           const filledPdfBytes = await pdfDoc.save();
@@ -82,33 +119,49 @@ const PDFPreview = ({ pdfBytes, formValues, formData }: PDFPreviewProps) => {
           }
 
           setPdfDataUrl(dataUrl);
+
+          // Update the iframe content without full reload if possible
+          if (iframeRef.current && pdfDataUrl) {
+            const iframe = iframeRef.current;
+            try {
+              // Try to update the existing PDF viewer
+              if (iframe.contentWindow) {
+                // Some PDF viewers support replacing the document
+                iframe.src = dataUrl;
+              }
+            } catch (e) {
+              console.warn("Could not update PDF viewer dynamically:", e);
+            }
+          }
         } catch (error) {
           console.error("Error filling PDF:", error);
         } finally {
           setLoading(false);
         }
       },
-      300
+      500 // Throttle to once every 500ms
     ),
     []
   );
 
-  // Fill PDF with form values
+  // Fill PDF with form values when they change
   useEffect(() => {
-    if (pdfBytes) {
-      if (Object.keys(formValues).length > 0) {
-        debouncedFillPdf(pdfBytes, formValues);
-      } else {
-        // Just display the original PDF if no form values
+    if (pdfBytes && Object.keys(formValues).length > 0) {
+      // Check if formValues has actually changed
+      const hasChanged = Object.entries(formValues).some(
+        ([key, value]) => prevValuesRef.current[key] !== value
+      );
+
+      if (hasChanged) {
+        throttledFillPdf(pdfBytes, formValues);
+        prevValuesRef.current = { ...formValues };
+      }
+    } else if (pdfBytes) {
+      // Just display the original PDF if no form values
+      if (!pdfDataUrl) {
         setLoading(true);
         const blob = new Blob([pdfBytes], { type: "application/pdf" });
         const dataUrl = URL.createObjectURL(blob);
-
-        // Clean up old URL if exists
-        if (pdfDataUrl) {
-          URL.revokeObjectURL(pdfDataUrl);
-        }
-
         setPdfDataUrl(dataUrl);
         setLoading(false);
       }
@@ -119,17 +172,10 @@ const PDFPreview = ({ pdfBytes, formValues, formData }: PDFPreviewProps) => {
       if (pdfDataUrl) {
         URL.revokeObjectURL(pdfDataUrl);
       }
-      // Cancel debounced function if it's pending
-      debouncedFillPdf.cancel();
+      // Cancel throttled function if it's pending
+      throttledFillPdf.cancel();
     };
-  }, [pdfBytes, debouncedFillPdf]);
-
-  // Handle changing form values with minimal re-rendering
-  useEffect(() => {
-    if (pdfBytes && Object.keys(formValues).length > 0) {
-      debouncedFillPdf(pdfBytes, formValues);
-    }
-  }, [formValues, pdfBytes, debouncedFillPdf]);
+  }, [pdfBytes, formValues, pdfDataUrl, throttledFillPdf]);
 
   const handleDownload = () => {
     if (!filledPdfBytes && !pdfBytes) return;
@@ -159,8 +205,6 @@ const PDFPreview = ({ pdfBytes, formValues, formData }: PDFPreviewProps) => {
 
   return (
     <div className="h-[650px] flex flex-col">
-      {" "}
-      {/* Increased height */}
       <div className="flex justify-between mb-2">
         <div className="flex gap-2">
           <Button
@@ -202,6 +246,7 @@ const PDFPreview = ({ pdfBytes, formValues, formData }: PDFPreviewProps) => {
 
         {pdfDataUrl ? (
           <iframe
+            ref={iframeRef}
             src={`${pdfDataUrl}#view=FitH&zoom=${zoomLevel * 100}`}
             title="PDF Preview"
             className="w-full h-full"
