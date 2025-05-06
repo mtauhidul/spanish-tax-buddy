@@ -137,18 +137,36 @@
     "manualFill": "Relleno Manual",
     "uploadPdf": "Subir PDF",
     "pdfPreview": "Vista Previa del Formulario",
-    "previewUnavailable": "Vista previa no disponible. Comienza a rellenar el formulario para ver una vista previa."
+    "previewUnavailable": "Vista previa no disponible. Comienza a rellenar el formulario para ver una vista previa.",
+    "saveProgress": "Guardar Progreso",
+    "progressSaved": "Progreso Guardado",
+    "progressSavedDescription": "Tu progreso del formulario ha sido guardado exitosamente",
+    "saveError": "Error al Guardar",
+    "saveErrorDescription": "Hubo un error al guardar tu progreso",
+    "loadError": "Error de Carga",
+    "loadErrorDescription": "Hubo un error al cargar el formulario",
+    "progressLoaded": "Progreso Cargado",
+    "progressLoadedDescription": "Tu progreso anterior ha sido cargado",
+    "pdfError": "Error de PDF",
+    "pdfErrorDescription": "Hubo un error al cargar el archivo PDF"
   },
   "aiChat": {
     "title": "Asistente Fiscal IA",
     "description": "Chatea con nuestro asistente de IA para completar tu formulario paso a paso.",
-    "inputPlaceholder": "Escribe tu respuesta aquí..."
+    "inputPlaceholder": "Escribe tu respuesta aquí...",
+    "formCompletion": "Completado del formulario",
+    "complete": "Completo",
+    "incomplete": "Incompleto"
   },
   "manualForm": {
     "title": "Relleno Manual del Formulario",
     "description": "Completa cada campo manualmente. Los campos obligatorios están marcados con *.",
     "fieldRequired": "Este campo es obligatorio",
-    "saveButton": "Guardar Información"
+    "saveButton": "Guardar Información",
+    "validationError": "Error de Validación",
+    "pleaseCorrectErrors": "Por favor corrige los errores resaltados",
+    "formSaved": "Formulario Guardado",
+    "formSavedDescription": "Los datos de tu formulario han sido guardados exitosamente"
   },
   "uploadForm": {
     "title": "Subir Formulario Existente",
@@ -161,17 +179,24 @@
     "finishing": "Casi terminado...",
     "processButton": "Procesar PDF",
     "dataExtracted": "Datos extraídos exitosamente",
+    "dataExtractedDescription": "Los datos han sido extraídos exitosamente de tu PDF",
     "uploadAnother": "Subir Otro",
     "reviewData": "Revisar Datos Extraídos",
     "confirmData": "Confirmar Información",
+    "dataConfirmed": "Datos Confirmados",
+    "dataConfirmedDescription": "Tus datos han sido confirmados y aplicados al formulario",
     "pdfOnly": "Por favor, sube solo archivos PDF.",
     "processError": "Ocurrió un error al procesar el archivo. Por favor, inténtalo de nuevo.",
-    "error": "Error de Carga"
+    "error": "Error de Carga",
+    "yes": "Sí",
+    "no": "No"
   },
   "pdfPreview": {
     "loading": "Generando vista previa...",
     "download": "Descargar PDF",
-    "noPreview": "No hay vista previa disponible"
+    "noPreview": "No hay vista previa disponible",
+    "zoomIn": "Acercar",
+    "zoomOut": "Alejar"
   },
   "cookies": {
     "title": "Este sitio web utiliza cookies",

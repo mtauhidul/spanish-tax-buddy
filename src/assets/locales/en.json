@@ -137,18 +137,36 @@
     "manualFill": "Manual Fill",
     "uploadPdf": "Upload PDF",
     "pdfPreview": "Form Preview",
-    "previewUnavailable": "Preview unavailable. Start filling out the form to see a preview."
+    "previewUnavailable": "Preview unavailable. Start filling out the form to see a preview.",
+    "saveProgress": "Save Progress",
+    "progressSaved": "Progress Saved",
+    "progressSavedDescription": "Your form progress has been saved successfully",
+    "saveError": "Save Error",
+    "saveErrorDescription": "There was an error saving your progress",
+    "loadError": "Load Error",
+    "loadErrorDescription": "There was an error loading the form",
+    "progressLoaded": "Progress Loaded",
+    "progressLoadedDescription": "Your previous progress has been loaded",
+    "pdfError": "PDF Error",
+    "pdfErrorDescription": "There was an error loading the PDF file"
   },
   "aiChat": {
     "title": "AI Tax Assistant",
     "description": "Chat with our AI assistant to fill out your form step by step.",
-    "inputPlaceholder": "Type your response here..."
+    "inputPlaceholder": "Type your response here...",
+    "formCompletion": "Form completion",
+    "complete": "Complete",
+    "incomplete": "Incomplete"
   },
   "manualForm": {
     "title": "Manual Form Fill",
     "description": "Fill out each field manually. Required fields are marked with *.",
     "fieldRequired": "This field is required",
-    "saveButton": "Save Information"
+    "saveButton": "Save Information",
+    "validationError": "Validation Error",
+    "pleaseCorrectErrors": "Please correct the highlighted errors",
+    "formSaved": "Form Saved",
+    "formSavedDescription": "Your form data has been saved successfully"
   },
   "uploadForm": {
     "title": "Upload Existing Form",
@@ -161,17 +179,24 @@
     "finishing": "Almost done...",
     "processButton": "Process PDF",
     "dataExtracted": "Data extracted successfully",
+    "dataExtractedDescription": "Data has been successfully extracted from your PDF",
     "uploadAnother": "Upload Another",
     "reviewData": "Review Extracted Data",
     "confirmData": "Confirm Information",
+    "dataConfirmed": "Data Confirmed",
+    "dataConfirmedDescription": "Your data has been confirmed and applied to the form",
     "pdfOnly": "Please upload a PDF file only.",
     "processError": "An error occurred while processing the file. Please try again.",
-    "error": "Upload Error"
+    "error": "Upload Error",
+    "yes": "Yes",
+    "no": "No"
   },
   "pdfPreview": {
     "loading": "Generating preview...",
     "download": "Download PDF",
-    "noPreview": "No preview available"
+    "noPreview": "No preview available",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out"
   },
   "cookies": {
     "title": "This website uses cookies",
