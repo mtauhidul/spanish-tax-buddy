@@ -131,7 +131,7 @@ export const getReadableLabel = (fieldName: string): string => {
 /**
  * Find context around a specific field in the PDF text
  */
-export const findFieldContext = (pdfText: string, field: FormField): string => {
+export const findFieldContext = (field: FormField): string => {
   // In a real implementation, we would search the extracted text
   // For this implementation, we'll return placeholder text
   const contexts = [
