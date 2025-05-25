@@ -102,7 +102,7 @@ const PrivacyPolicy = () => {
               <p>
                 Si tienes alguna pregunta sobre esta política de privacidad o
                 nuestras prácticas de privacidad, contáctanos en:
-                privacy@spanishtaxbuddy.com
+                privacy@ImpuestIA.com
               </p>
             </>
           ) : (
@@ -183,8 +183,7 @@ const PrivacyPolicy = () => {
               <h2>6. Contact</h2>
               <p>
                 If you have any questions about this privacy policy or our
-                privacy practices, please contact us at:
-                privacy@spanishtaxbuddy.com
+                privacy practices, please contact us at: privacy@ImpuestIA.com
               </p>
             </>
           )}

@@ -138,7 +138,7 @@ h-10 w-auto md:h-12 lg:h-14 object-contain transition-transform duration-300 hov
                 <div className="flex flex-col h-full py-4">
                   <div className="flex justify-between items-center mb-6">
                     <span className="text-xl font-bold text-[var(--primary)]">
-                      SpanishTaxBuddy
+                      ImpuestIA
                     </span>
                     <Button
                       variant="ghost"
@@ -226,7 +226,7 @@ h-10 w-auto md:h-12 lg:h-14 object-contain transition-transform duration-300 hov
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
               <p className="text-gray-600 text-sm">
-                &copy; {new Date().getFullYear()} SpanishTaxBuddy.{" "}
+                &copy; {new Date().getFullYear()} ImpuestIA.{" "}
                 {t("footer.rights")}
               </p>
             </div>

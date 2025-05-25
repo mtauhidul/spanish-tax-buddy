@@ -95,7 +95,7 @@ const TermsOfUse = () => {
               <h2>10. Contacto</h2>
               <p>
                 Si tienes alguna pregunta sobre estos Términos de Uso,
-                contáctanos en: terms@spanishtaxbuddy.com
+                contáctanos en: terms@ImpuestIA.com
               </p>
             </>
           ) : (
@@ -174,7 +174,7 @@ const TermsOfUse = () => {
               <h2>10. Contact</h2>
               <p>
                 If you have any questions about these Terms of Use, please
-                contact us at: terms@spanishtaxbuddy.com
+                contact us at: terms@ImpuestIA.com
               </p>
             </>
           )}
