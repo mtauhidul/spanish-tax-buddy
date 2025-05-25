@@ -137,7 +137,9 @@ h-10 w-auto md:h-12 lg:h-14 object-contain transition-transform duration-300 hov
               <SheetContent side="right">
                 <div className="flex flex-col h-full py-4">
                   <div className="flex justify-between items-center mb-6">
-                    <span className="text-xl font-bold">SpanishTaxBuddy</span>
+                    <span className="text-xl font-bold text-[var(--primary)]">
+                      SpanishTaxBuddy
+                    </span>
                     <Button
                       variant="ghost"
                       size="icon"

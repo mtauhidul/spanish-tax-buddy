@@ -1,9 +1,9 @@
-import { ThemeProviderContext } from "@/context/ThemeProviderContext";
+import { ThemeProviderContext, type ThemeProviderState } from "@/context/ThemeProviderContext";
 import { useEffect, useState, type ReactNode } from "react";
 
-type Theme = "light" | "dark" | "system";
+// Unified Theme type from feat/ui-rebrand-new-colors-logo
+type Theme = "dark" | "light" | "system";
 
-// src/components/ThemeProvider.tsx
 type ThemeProviderProps = {
   children: ReactNode;
   defaultTheme?: Theme;
@@ -16,33 +16,38 @@ export function ThemeProvider({
   storageKey = "ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  );
+  const [theme, setTheme] = useState<Theme>(() => {
+    const storedTheme = localStorage.getItem(storageKey) as Theme | null;
+    if (storedTheme) {
+      return storedTheme;
+    }
+    return defaultTheme;
+  });
 
   useEffect(() => {
     const root = window.document.documentElement;
-
-    root.classList.remove("light", "dark");
+    let effectiveTheme: Theme;
 
     if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
-
-      root.classList.add(systemTheme);
-      return;
+      effectiveTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    } else {
+      effectiveTheme = theme;
     }
 
-    root.classList.add(theme);
-  }, [theme]);
+    root.classList.remove("light", "dark");
+    if (effectiveTheme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.add("light");
+    }
 
-  const value = {
-    theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
+    localStorage.setItem(storageKey, theme);
+  }, [theme, storageKey]);
+
+  const value: ThemeProviderState = {
+    theme: theme,
+    setTheme: (newTheme: Theme) => {
+      setTheme(newTheme);
     },
   };
 
