@@ -1,7 +1,7 @@
 import { ThemeProviderContext } from "@/context/ThemeProviderContext";
 import { useEffect, useState, type ReactNode } from "react";
 
-type Theme = "light" | "dark" | "system";
+type Theme = "light";
 
 // src/components/ThemeProvider.tsx
 type ThemeProviderProps = {
@@ -12,37 +12,24 @@ type ThemeProviderProps = {
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
+  defaultTheme = "light",
   storageKey = "ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  );
+  const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
     const root = window.document.documentElement;
-
-    root.classList.remove("light", "dark");
-
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
-
-      root.classList.add(systemTheme);
-      return;
-    }
-
-    root.classList.add(theme);
-  }, [theme]);
+    root.classList.remove("dark");
+    root.classList.add("light");
+    localStorage.setItem(storageKey, "light"); // Persist that only light is active
+  }, [storageKey]); // theme can be removed from dependencies as it's always light
 
   const value = {
-    theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
+    theme: "light" as Theme, // Cast as Theme to satisfy type, actual is string "light"
+    setTheme: (newTheme: Theme) => { // newTheme will always be "light" due to type
+      localStorage.setItem(storageKey, "light");
+      setTheme("light");
     },
   };
 
