@@ -1,28 +1,26 @@
-import { ThemeProviderContext, type ThemeProviderState } from "@/context/ThemeProviderContext"; // Assuming ThemeProviderState is exported or use ThemeProviderContext directly
+import { ThemeProviderContext, type ThemeProviderState } from "@/context/ThemeProviderContext";
 import { useEffect, useState, type ReactNode } from "react";
 
-// This Theme type must match the one in ThemeProviderContext.tsx
+// Unified Theme type from feat/ui-rebrand-new-colors-logo
 type Theme = "dark" | "light" | "system";
 
 type ThemeProviderProps = {
   children: ReactNode;
-  defaultTheme?: Theme; // Use the broader Theme type
+  defaultTheme?: Theme;
   storageKey?: string;
 };
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system", // Default to system, which will resolve to light
+  defaultTheme = "system",
   storageKey = "ui-theme",
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
-    const storedTheme = localStorage.getItem(storageKey) as Theme;
-    // If stored theme is "dark", or if default is "dark" and no stored theme, set to "light".
-    // System theme will be handled by useEffect to default to light.
+    const storedTheme = localStorage.getItem(storageKey) as Theme | null;
     let initial = storedTheme || defaultTheme;
-    if (initial === "dark") {
-      initial = "light";
+    if (initial === "dark" || initial === "system") {
+      initial = "light"; // Always fall back to light
     }
     return initial;
   });
@@ -31,19 +29,14 @@ export function ThemeProvider({
     const root = window.document.documentElement;
     root.classList.remove("dark");
     root.classList.add("light");
-    // If theme state was 'system', actual applied theme is 'light'.
-    // Update stored theme to 'light' to reflect reality.
-    if (localStorage.getItem(storageKey) !== "light") {
-        localStorage.setItem(storageKey, "light");
-    }
-  }, [theme, storageKey]); // theme state change triggers this, ensures consistency
+    localStorage.setItem(storageKey, "light");
+  }, [storageKey]);
 
-  const value: ThemeProviderState = { // Ensure this matches the imported type
-    theme: "light", // We always report "light" as the current theme now.
-    setTheme: (newThemeCallbackParam: Theme) => { // Parameter name must match for assignability if type checking is strict that way, but usually it's by type. Let's use a distinct name.
-      // Regardless of what is passed, we set to "light".
+  const value: ThemeProviderState = {
+    theme: "light",
+    setTheme: (_newTheme: Theme) => {
       localStorage.setItem(storageKey, "light");
-      setTheme("light"); // Update the internal state to "light".
+      setTheme("light");
     },
   };
 
