@@ -1,4 +1,5 @@
 // src/components/layout/MainLayout.tsx
+import Logo from "@/assets/logo.png"; // Adjust the path as necessary
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -56,10 +57,13 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-center">
-              <span className="text-2xl font-bold text-blue-600">
-                SpanishTaxBuddy
-              </span>
+            <Link to="/" className="">
+              <img
+                src={Logo}
+                alt="Logo"
+                className="
+h-10 w-auto md:h-12 lg:h-14 object-contain transition-transform duration-300 hover:scale-105"
+              />
             </Link>
 
             {/* Desktop Navigation */}
