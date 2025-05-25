@@ -57,7 +57,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <Link to="/" className="flex items-center">
-              <span className="text-2xl font-bold text-blue-600">
+              <span className="text-2xl font-bold text-[var(--primary)]">
                 SpanishTaxBuddy
               </span>
             </Link>
@@ -133,7 +133,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               <SheetContent side="right">
                 <div className="flex flex-col h-full py-4">
                   <div className="flex justify-between items-center mb-6">
-                    <span className="text-xl font-bold">SpanishTaxBuddy</span>
+                    <span className="text-xl font-bold text-[var(--primary)]">SpanishTaxBuddy</span>
                     <Button
                       variant="ghost"
                       size="icon"
