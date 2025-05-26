@@ -62,7 +62,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 src={Logo}
                 alt="Logo"
                 className="
-h-10 w-auto md:h-12 lg:h-14 object-contain transition-transform duration-300 hover:scale-105"
+h-12 w-auto md:h-14 lg:h-16 object-contain transition-transform duration-300 hover:scale-105"
               />
             </Link>
 

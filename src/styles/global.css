@@ -5,65 +5,67 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Light theme - ImpuestIA Color Palette */
+    --background: 245 247 250; /* #F5F7FA - Light Gray */
+    --foreground: 44 62 80; /* #2C3E50 - Deep Blue */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 255 255 255; /* White */
+    --card-foreground: 44 62 80; /* #2C3E50 - Deep Blue */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 255 255 255; /* White */
+    --popover-foreground: 44 62 80; /* #2C3E50 - Deep Blue */
 
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 44 62 80; /* #2C3E50 - Deep Blue */
+    --primary-foreground: 255 255 255; /* White */
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 39 174 96; /* #27AE60 - Emerald Green */
+    --secondary-foreground: 255 255 255; /* White */
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 127 140 213; /* #7F8CD5 - Cool Gray */
+    --muted-foreground: 44 62 80; /* #2C3E50 - Deep Blue */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 241 196 15; /* #F1C40F - Sunshine Yellow */
+    --accent-foreground: 44 62 80; /* #2C3E50 - Deep Blue */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 231 76 60; /* #E74C3C - Red for errors */
+    --destructive-foreground: 255 255 255; /* White */
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --border: 127 140 213; /* #7F8CD5 - Cool Gray */
+    --input: 255 255 255; /* White */
+    --ring: 39 174 96; /* #27AE60 - Emerald Green */
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark theme - ImpuestIA Color Palette */
+    --background: 44 62 80; /* #2C3E50 - Deep Blue */
+    --foreground: 245 247 250; /* #F5F7FA - Light Gray */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 44 62 80; /* #2C3E50 - Deep Blue */
+    --card-foreground: 245 247 250; /* #F5F7FA - Light Gray */
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 44 62 80; /* #2C3E50 - Deep Blue */
+    --popover-foreground: 245 247 250; /* #F5F7FA - Light Gray */
 
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 241 196 15; /* #F1C40F - Sunshine Yellow */
+    --primary-foreground: 44 62 80; /* #2C3E50 - Deep Blue */
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 39 174 96; /* #27AE60 - Emerald Green */
+    --secondary-foreground: 255 255 255; /* White */
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 127 140 213; /* #7F8CD5 - Cool Gray */
+    --muted-foreground: 245 247 250; /* #F5F7FA - Light Gray */
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 39 174 96; /* #27AE60 - Emerald Green */
+    --accent-foreground: 255 255 255; /* White */
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 231 76 60; /* #E74C3C - Red for errors */
+    --destructive-foreground: 255 255 255; /* White */
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --border: 127 140 213; /* #7F8CD5 - Cool Gray */
+    --input: 66 82 100; /* Darker shade of Deep Blue */
+    --ring: 241 196 15; /* #F1C40F - Sunshine Yellow */
   }
 }
 

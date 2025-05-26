@@ -43,37 +43,38 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(96.38% 0.005 253.08);
-  --foreground: oklch(32.84% 0.032 250.78);
-  --card: oklch(100% 0 0);
-  --card-foreground: oklch(32.84% 0.032 250.78);
-  --popover: oklch(100% 0 0);
-  --popover-foreground: oklch(32.84% 0.032 250.78);
-  --primary: oklch(32.84% 0.032 250.78);
-  --primary-foreground: oklch(100% 0 0);
-  --secondary: oklch(67.06% 0.158 151.02);
-  --secondary-foreground: oklch(100% 0 0);
-  --muted: oklch(58.05% 0.011 200.12);
-  --muted-foreground: oklch(32.84% 0.032 250.78);
-  --accent: oklch(81.39% 0.156 87.09);
-  --accent-foreground: oklch(32.84% 0.032 250.78);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(58.05% 0.011 200.12);
-  --input: oklch(100% 0 0);
-  --ring: oklch(67.06% 0.158 151.02);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(96.38% 0.005 253.08);
-  --sidebar-foreground: oklch(32.84% 0.032 250.78);
-  --sidebar-primary: oklch(32.84% 0.032 250.78);
-  --sidebar-primary-foreground: oklch(100% 0 0);
-  --sidebar-accent: oklch(81.39% 0.156 87.09);
-  --sidebar-accent-foreground: oklch(32.84% 0.032 250.78);
-  --sidebar-border: oklch(58.05% 0.011 200.12);
-  --sidebar-ring: oklch(67.06% 0.158 151.02);
+  /* Light theme - ImpuestIA Color Palette */
+  --background: #f5f7fa; /* Light Gray */
+  --foreground: #2c3e50; /* Deep Blue */
+  --card: #ffffff;
+  --card-foreground: #2c3e50; /* Deep Blue */
+  --popover: #ffffff;
+  --popover-foreground: #2c3e50; /* Deep Blue */
+  --primary: #2c3e50; /* Deep Blue */
+  --primary-foreground: #ffffff;
+  --secondary: #27ae60; /* Emerald Green */
+  --secondary-foreground: #ffffff;
+  --muted: #7f8cd5; /* Cool Gray */
+  --muted-foreground: #2c3e50; /* Deep Blue */
+  --accent: #f1c40f; /* Sunshine Yellow */
+  --accent-foreground: #2c3e50; /* Deep Blue */
+  --destructive: #e74c3c;
+  --border: #7f8cd5; /* Cool Gray */
+  --input: #ffffff;
+  --ring: #27ae60; /* Emerald Green */
+  --chart-1: #2c3e50; /* Deep Blue */
+  --chart-2: #27ae60; /* Emerald Green */
+  --chart-3: #f1c40f; /* Sunshine Yellow */
+  --chart-4: #7f8cd5; /* Cool Gray */
+  --chart-5: #f5f7fa; /* Light Gray */
+  --sidebar: #f5f7fa; /* Light Gray */
+  --sidebar-foreground: #2c3e50; /* Deep Blue */
+  --sidebar-primary: #2c3e50; /* Deep Blue */
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1c40f; /* Sunshine Yellow */
+  --sidebar-accent-foreground: #2c3e50; /* Deep Blue */
+  --sidebar-border: #7f8cd5; /* Cool Gray */
+  --sidebar-ring: #27ae60; /* Emerald Green */
 }
 
 @layer base {
